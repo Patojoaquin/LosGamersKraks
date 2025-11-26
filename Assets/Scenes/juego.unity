@@ -269,11 +269,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 238897888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a7594b85e10abb419949a2e32a6ed6e, type: 3}
+  m_Script: {fileID: 11500000, guid: 2aafaad4ab1c0fa4fb165480531fe39d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CubeMovement
-  moveSpeed: 5
-  jumpForce: 5
+  m_EditorClassIdentifier: Assembly-CSharp::MovimientoCubo
+  velocidad: 7
+  fuerzaSalto: 8
 --- !u!1001 &436380627
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1107,7 +1107,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0.6339, g: 0.6607216, b: 0.7264151, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
