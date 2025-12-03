@@ -1,17 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement; // Necesario para recargar la escena
+using UnityEngine.SceneManagement;
 
 // --- REQUISITOS DE COMPONENTES 2D ---
-[RequireComponent(typeof(Rigidbody2D))] // Cambiado a Rigidbody2D
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Health Settings")]
-    public int maxHealth = 100;
-    private int currentHealth;
-
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
@@ -37,14 +33,13 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         
-        currentHealth = maxHealth; // Inicia la vida al máximo
         jumpsLeft = maxJumps;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     void Update()
     {
-        if (isDead) return; // Si está muerto, no hacer nada
+        if (isDead) return;
 
         UpdateAnimations();
         HandleFlipping();
@@ -52,39 +47,35 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDead) return; // Si está muerto, no hacer nada
+        if (isDead) return;
 
         HandleMovement();
         CheckIfGrounded();
     }
 
-    // --- NUEVOS MÉTODOS PARA LA VIDA ---
-
-    public void TakeDamage(int damage)
+    // --- NUEVO MÉTODO PARA DETECTAR LA ZONA DE MUERTE ---
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isDead) return;
-
-        currentHealth -= damage;
-        animator.SetTrigger("isHurt"); // Activa la animación de "herido"
-
-        if (currentHealth <= 0)
+        // Si el personaje entra en un collider con el tag "DeathZone"
+        if (other.CompareTag("DeathZone"))
         {
             Die();
         }
     }
 
-    private void Die()
+    // --- MÉTODOS PARA LA MUERTE INSTANTÁNEA ---
+    public void Die() // Public para que otros scripts puedan llamarlo (como Spike.cs)
     {
+        if (isDead) return;
+
         isDead = true;
-        animator.SetBool("isDead", true); // Activa la animación de "muerto"
+        animator.SetBool("isDead", true);
 
-        // Desactiva el movimiento y las colisiones físicas
         rb.linearVelocity = Vector2.zero;
-        rb.isKinematic = true; // El cuerpo ya no es afectado por físicas
-        GetComponent<Collider2D>().enabled = false; // Desactiva el collider
+        rb.isKinematic = true;
+        GetComponent<Collider2D>().enabled = false;
 
-        // Opcional: Recargar la escena después de 2 segundos
-        // Invoke(nameof(ReloadScene), 2f);
+        Invoke(nameof(ReloadScene), 2f); 
     }
     
     private void ReloadScene()
@@ -92,8 +83,7 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-
-    // --- MANEJO DE INPUT ---
+    // --- MANEJO DE INPUT (con chequeo de muerte) ---
     public void OnMove(InputValue value)
     {
         if (isDead) return;
@@ -136,7 +126,6 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    // (El resto de métodos como Jump, Attack, Flip, etc. no cambian)
     #region Unchanged Methods
     private void Jump()
     {
